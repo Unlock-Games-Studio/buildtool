@@ -21,6 +21,7 @@ namespace SuperUnityBuild.BuildTool
         private const string _minSdkVersionVariantId = "Min SDK Version";
 
         private const string _androidApiLevelEnumPrefix = "AndroidApiLevel";
+        private const string _scriptingBackend = "Scripting backend";
 
         #endregion
 
@@ -56,7 +57,8 @@ namespace SuperUnityBuild.BuildTool
                     new BuildVariant(_minSdkVersionVariantId, EnumNamesToArray<AndroidSdkVersions>()
                         .Select(i => i.Replace(_androidApiLevelEnumPrefix, ""))
                         .ToArray(),
-                    0)
+                    0),
+                    new BuildVariant(_scriptingBackend, EnumNamesToArray<ScriptingImplementation>(), 1)
                 };
             }
         }
@@ -83,6 +85,9 @@ namespace SuperUnityBuild.BuildTool
                         break;
                     case _minSdkVersionVariantId:
                         SetMinSdkVersion(key);
+                        break;
+                    case _scriptingBackend:
+                        SetScriptingBackend(key);
                         break;
                 }
             }
@@ -114,6 +119,11 @@ namespace SuperUnityBuild.BuildTool
         {
             PlayerSettings.Android.minSdkVersion
                 = EnumValueFromKey<AndroidSdkVersions>(_androidApiLevelEnumPrefix + key);
+        }
+
+        private void SetScriptingBackend(string key)
+        {
+            PlayerSettings.SetScriptingBackend(_targetGroup, EnumValueFromKey<ScriptingImplementation>(key));
         }
     }
 }
