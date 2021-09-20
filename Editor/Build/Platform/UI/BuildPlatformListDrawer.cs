@@ -39,10 +39,24 @@ namespace SuperUnityBuild.BuildTool
             {
                 EditorGUILayout.BeginVertical(UnityBuildGUIUtility.dropdownContentStyle);
 
-                DrawPlatforms(property);
+                // Draw all created/enabled platforms.
+                int enabledCount = 0;
+                for (int i = 0; i < list.arraySize; i++)
+                {
+                    SerializedProperty platformProperty = list.GetArrayElementAtIndex(i);
+                    SerializedProperty platformEnabled = platformProperty.FindPropertyRelative("enabled");
 
-                if (list.arraySize > 0)
+                    if (platformEnabled.boolValue)
+                    {
+                        ++enabledCount;
+                        EditorGUILayout.PropertyField(platformProperty, GUILayout.MaxHeight(0));
+                    }
+                }
+
+                if (enabledCount > 0)
+                {
                     GUILayout.Space(20);
+                }
 
                 // Draw all available platforms.
                 GUILayout.BeginHorizontal();
@@ -52,10 +66,6 @@ namespace SuperUnityBuild.BuildTool
                 {
                     BuildPlatform addedBuildPlatform = GetBuildPlatform(availablePlatformTypeList[index]);
                     platformList.platforms.Add(addedBuildPlatform);
-
-                    AssetDatabase.AddObjectToAsset(addedBuildPlatform, BuildSettings.instance);
-                    AssetDatabaseUtility.ImportAsset(AssetDatabase.GetAssetPath(BuildSettings.instance));
-
                     platformList.platforms[platformList.platforms.Count - 1].enabled = true;
 
                     for (int i = platformList.platforms.Count - 1; i >= 0; i--)
@@ -73,55 +83,6 @@ namespace SuperUnityBuild.BuildTool
             EditorGUI.EndProperty();
         }
 
-        private void DrawPlatforms(SerializedProperty property)
-        {
-            for (int i = 0; i < list.arraySize; i++)
-            {
-                SerializedProperty listEntry = list.GetArrayElementAtIndex(i);
-
-                BuildPlatform buildPlatform = listEntry.objectReferenceValue as BuildPlatform;
-                if (buildPlatform == null)
-                {
-                    list.DeleteArrayElementAtIndex(i);
-                    --i;
-                    continue;
-                }
-
-                SerializedObject serializedBuildPlatform = new SerializedObject(buildPlatform);
-
-                EditorGUILayout.BeginHorizontal();
-                bool show = listEntry.isExpanded;
-
-                UnityBuildGUIUtility.DropdownHeader(buildPlatform.platformName, ref show, false, GUILayout.ExpandWidth(true));
-
-                listEntry.isExpanded = show;
-
-                if (GUILayout.Button("X", UnityBuildGUIUtility.helpButtonStyle))
-                {
-                    List<BuildPlatform> buildPlatforms = BuildSettings.platformList.platforms;
-
-                    // Destroy underlying object.
-                    ScriptableObject.DestroyImmediate(buildPlatforms[i], true);
-                    AssetDatabaseUtility.ImportAsset(AssetDatabase.GetAssetPath(BuildSettings.instance));
-
-                    // Remove object reference from list.
-                    // TODO: Why do I need to call this twice? First call nulls reference, second one then deletes null entry.
-                    list.DeleteArrayElementAtIndex(i);
-                    list.DeleteArrayElementAtIndex(i);
-                    show = false;
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                if (show && buildPlatform.enabled)
-                {
-                    EditorGUILayout.BeginVertical(UnityBuildGUIUtility.dropdownContentStyle);
-                    buildPlatform.Draw(serializedBuildPlatform);
-                    EditorGUILayout.EndVertical();
-                }
-            }
-        }
-
         private void PopulateAvailablePlatforms()
         {
             if (availablePlatformTypeList == null)
@@ -133,32 +94,23 @@ namespace SuperUnityBuild.BuildTool
 
         private BuildPlatform GetBuildPlatform(Platform platform)
         {
-            Type t;
             switch (platform)
             {
                 case Platform.Android:
-                    t = typeof(BuildAndroid);
-                    break;
+                    return new BuildAndroid();
                 case Platform.iOS:
-                    t = typeof(BuildIOS);
-                    break;
+                    return new BuildIOS();
                 case Platform.Linux:
-                    t = typeof(BuildLinux);
-                    break;
+                    return new BuildLinux();
                 case Platform.OSX:
-                    t = typeof(BuildOSX);
-                    break;
+                    return new BuildOSX();
                 case Platform.PC:
-                    t = typeof(BuildPC);
-                    break;
+                    return new BuildPC();
                 case Platform.WebGL:
-                    t = typeof(BuildWebGL);
-                    break;
+                    return new BuildWebGL();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
             }
-
-            return ScriptableObject.CreateInstance(t) as BuildPlatform;
         }
     }
 }
