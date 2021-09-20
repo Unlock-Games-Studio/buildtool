@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,8 +13,8 @@ namespace SuperUnityBuild.BuildTool
         private SerializedProperty list = null;
         private BuildPlatformList platformList = null;
 
-        private List<string> availablePlatformNameList = new List<string>();
-        private List<Type> availablePlatformTypeList = new List<Type>();
+        private Platform[] availablePlatformTypeList;
+        private string[] availablePlatformNameList;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -50,7 +50,7 @@ namespace SuperUnityBuild.BuildTool
                 index = EditorGUILayout.Popup(index, availablePlatformNameList.ToArray(), UnityBuildGUIUtility.popupStyle, GUILayout.ExpandWidth(false), GUILayout.MaxWidth(250));
                 if (GUILayout.Button("Add Platform", GUILayout.ExpandWidth(false), GUILayout.MaxWidth(150)))
                 {
-                    BuildPlatform addedBuildPlatform = ScriptableObject.CreateInstance(availablePlatformTypeList[index]) as BuildPlatform;
+                    BuildPlatform addedBuildPlatform = GetBuildPlatform(availablePlatformTypeList[index]);
                     platformList.platforms.Add(addedBuildPlatform);
 
                     AssetDatabase.AddObjectToAsset(addedBuildPlatform, BuildSettings.instance);
@@ -124,25 +124,41 @@ namespace SuperUnityBuild.BuildTool
 
         private void PopulateAvailablePlatforms()
         {
-            if (availablePlatformTypeList.Count > 0)
-                return;
-
-            Type ti = typeof(BuildPlatform);
-
-            availablePlatformNameList.Clear();
-            availablePlatformTypeList.Clear();
-            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            if (availablePlatformTypeList == null)
             {
-                foreach (Type t in asm.GetTypes())
-                {
-                    if (ti.IsAssignableFrom(t) && ti != t)
-                    {
-                        BuildPlatform instance = ScriptableObject.CreateInstance(t) as BuildPlatform;
-                        availablePlatformNameList.Add(instance.platformName);
-                        availablePlatformTypeList.Add(t);
-                    }
-                }
+                availablePlatformTypeList = Enum.GetValues(typeof(Platform)).Cast<Platform>().ToArray();
+                availablePlatformNameList = availablePlatformTypeList.Select(platform => platform.ToString()).ToArray();
             }
+        }
+
+        private BuildPlatform GetBuildPlatform(Platform platform)
+        {
+            Type t;
+            switch (platform)
+            {
+                case Platform.Android:
+                    t = typeof(BuildAndroid);
+                    break;
+                case Platform.iOS:
+                    t = typeof(BuildIOS);
+                    break;
+                case Platform.Linux:
+                    t = typeof(BuildLinux);
+                    break;
+                case Platform.OSX:
+                    t = typeof(BuildOSX);
+                    break;
+                case Platform.PC:
+                    t = typeof(BuildPC);
+                    break;
+                case Platform.WebGL:
+                    t = typeof(BuildWebGL);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
+            }
+
+            return ScriptableObject.CreateInstance(t) as BuildPlatform;
         }
     }
 }
