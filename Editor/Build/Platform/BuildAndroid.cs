@@ -11,7 +11,6 @@ namespace SuperUnityBuild.BuildTool
 
         private const string _name = "Android";
         private const string _binaryNameFormat = "{0}.apk";
-        private const string _aabBinaryNameFormat = "{0}.aab";
         private const string _dataDirNameFormat = "{0}_Data";
         private const BuildTargetGroup _targetGroup = BuildTargetGroup.Android;
 
@@ -20,6 +19,7 @@ namespace SuperUnityBuild.BuildTool
         private const string _buildSystemVariantId = "Build System";
         private const string _splitApksVariantId = "Split APKs";
         private const string _minSdkVersionVariantId = "Min SDK Version";
+        private const string _targetSdkVersionVariantId = "Target SDK Version";
 
         private const string _androidApiLevelEnumPrefix = "AndroidApiLevel";
         private const string _scriptingBackend = "Scripting backend";
@@ -47,6 +47,10 @@ namespace SuperUnityBuild.BuildTool
 
             if (variants == null || variants.Length == 0)
             {
+                string[] sdks = EnumNamesToArray<AndroidSdkVersions>()
+                    .Select(i => i.Replace(_androidApiLevelEnumPrefix, ""))
+                    .ToArray();
+
                 variants = new BuildVariant[] {
                     new BuildVariant(_deviceTypeVariantId, EnumNamesToArray<AndroidArchitecture>()
                         .Skip(1)
@@ -59,6 +63,7 @@ namespace SuperUnityBuild.BuildTool
                         .Select(i => i.Replace(_androidApiLevelEnumPrefix, ""))
                         .ToArray(),
                     0),
+                    new BuildVariant(_targetSdkVersionVariantId, sdks, 0),
                     new BuildVariant(_scriptingBackend, EnumNamesToArray<ScriptingImplementation>(), 1)
                 };
             }

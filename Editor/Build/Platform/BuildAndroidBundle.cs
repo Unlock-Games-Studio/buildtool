@@ -20,6 +20,7 @@ namespace SuperUnityBuild.BuildTool
         private const string _buildSystemVariantId = "Build System";
         private const string _splitApksVariantId = "Split APKs";
         private const string _minSdkVersionVariantId = "Min SDK Version";
+        private const string _targetSdkVersionVariantId = "Target SDK Version";
 
         private const string _androidApiLevelEnumPrefix = "AndroidApiLevel";
         private const string _scriptingBackend = "Scripting backend";
@@ -48,6 +49,10 @@ namespace SuperUnityBuild.BuildTool
 
             if (variants == null || variants.Length == 0)
             {
+                string[] sdks = EnumNamesToArray<AndroidSdkVersions>()
+                    .Select(i => i.Replace(_androidApiLevelEnumPrefix, ""))
+                    .ToArray();
+
                 variants = new BuildVariant[]
                 {
                     new BuildVariant(_deviceTypeVariantId, EnumNamesToArray<AndroidArchitecture>()
@@ -56,11 +61,9 @@ namespace SuperUnityBuild.BuildTool
                         0),
                     new BuildVariant(_textureCompressionVariantId, EnumNamesToArray<MobileTextureSubtarget>(), 0),
                     new BuildVariant(_buildSystemVariantId, new string[] {"Gradle"}, 0),
-                    new BuildVariant(_splitApksVariantId, new string[] {"Disabled", "Enabled"}, 0), new BuildVariant(
-                        _minSdkVersionVariantId, EnumNamesToArray<AndroidSdkVersions>()
-                            .Select(i => i.Replace(_androidApiLevelEnumPrefix, ""))
-                            .ToArray(),
-                        0),
+                    new BuildVariant(_splitApksVariantId, new string[] {"Disabled", "Enabled"}, 0),
+                    new BuildVariant(_minSdkVersionVariantId, sdks, 0),
+                    new BuildVariant(_targetSdkVersionVariantId, sdks, 0),
                     new BuildVariant(_scriptingBackend, EnumNamesToArray<ScriptingImplementation>(), 1)
                 };
             }
