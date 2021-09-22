@@ -71,6 +71,9 @@ GitHub.sublime-settings
 !.vscode/extensions.json
 *.code-workspace
 
+# Rider
+.idea/
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db

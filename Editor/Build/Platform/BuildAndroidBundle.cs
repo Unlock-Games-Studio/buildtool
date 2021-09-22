@@ -1,16 +1,17 @@
-﻿using System;
-using System.Linq;
+using System;
 using UnityEditor;
 
 namespace SuperUnityBuild.BuildTool
 {
+    using System.Linq;
+
     [Serializable]
-    public class BuildAndroid : BuildPlatform
+    public class BuildAndroidBundle : BuildPlatform
     {
         #region Constants
 
-        private const string _name = "Android";
-        private const string _binaryNameFormat = "{0}.apk";
+        private const string _name = "Android Bundle";
+        private const string _binaryNameFormat = "{0}.aab";
         private const string _dataDirNameFormat = "{0}_Data";
         private const BuildTargetGroup _targetGroup = BuildTargetGroup.Android;
 
@@ -26,7 +27,7 @@ namespace SuperUnityBuild.BuildTool
 
         #endregion
 
-        public BuildAndroid()
+        public BuildAndroidBundle()
         {
             enabled = false;
             Init();
@@ -40,7 +41,8 @@ namespace SuperUnityBuild.BuildTool
 
             if (architectures == null || architectures.Length == 0)
             {
-                architectures = new BuildArchitecture[] {
+                architectures = new BuildArchitecture[]
+                {
                     new BuildArchitecture(BuildTarget.Android, "Android", true, _binaryNameFormat)
                 };
             }
@@ -51,18 +53,16 @@ namespace SuperUnityBuild.BuildTool
                     .Select(i => i.Replace(_androidApiLevelEnumPrefix, ""))
                     .ToArray();
 
-                variants = new BuildVariant[] {
+                variants = new BuildVariant[]
+                {
                     new BuildVariant(_deviceTypeVariantId, EnumNamesToArray<AndroidArchitecture>()
-                        .Skip(1)
-                        .ToArray(),
-                    0),
+                            .Skip(1)
+                            .ToArray(),
+                        0),
                     new BuildVariant(_textureCompressionVariantId, EnumNamesToArray<MobileTextureSubtarget>(), 0),
-                    new BuildVariant(_buildSystemVariantId, new string[] { "Gradle" }, 0),
-                    new BuildVariant(_splitApksVariantId, new string[] { "Disabled", "Enabled" }, 0),
-                    new BuildVariant(_minSdkVersionVariantId, EnumNamesToArray<AndroidSdkVersions>()
-                        .Select(i => i.Replace(_androidApiLevelEnumPrefix, ""))
-                        .ToArray(),
-                    0),
+                    new BuildVariant(_buildSystemVariantId, new string[] {"Gradle"}, 0),
+                    new BuildVariant(_splitApksVariantId, new string[] {"Disabled", "Enabled"}, 0),
+                    new BuildVariant(_minSdkVersionVariantId, sdks, 0),
                     new BuildVariant(_targetSdkVersionVariantId, sdks, 0),
                     new BuildVariant(_scriptingBackend, EnumNamesToArray<ScriptingImplementation>(), 1)
                 };
@@ -71,7 +71,7 @@ namespace SuperUnityBuild.BuildTool
 
         public override void ApplyVariant()
         {
-            EditorUserBuildSettings.buildAppBundle = false;
+            EditorUserBuildSettings.buildAppBundle = true;
 
             foreach (var variantOption in variants)
             {
