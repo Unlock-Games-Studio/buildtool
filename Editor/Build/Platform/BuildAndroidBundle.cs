@@ -94,6 +94,9 @@ namespace SuperUnityBuild.BuildTool
                     case _minSdkVersionVariantId:
                         SetMinSdkVersion(key);
                         break;
+                    case _targetSdkVersionVariantId:
+                        SetMaxSdkVersion(key);
+                        break;
                     case _scriptingBackend:
                         SetScriptingBackend(key);
                         break;
@@ -127,6 +130,11 @@ namespace SuperUnityBuild.BuildTool
         {
             PlayerSettings.Android.minSdkVersion
                 = EnumValueFromKey<AndroidSdkVersions>(_androidApiLevelEnumPrefix + key);
+        }
+
+        private void SetMaxSdkVersion(string key)
+        {
+            PlayerSettings.Android.targetSdkVersion = EnumValueFromKey<AndroidSdkVersions>(_androidApiLevelEnumPrefix + key);
         }
 
         private void SetScriptingBackend(string key)
