@@ -35,6 +35,12 @@ namespace SuperUnityBuild.BuildTool
             PerformBuild(buildConfigs, options);
         }
 
+        public static void BuildMultiple(List<string> guids)
+        {
+            List<string> buildConfigs = BuildSettings.projectConfigurations.FilterKeychains(guids);
+            PerformBuild(buildConfigs.ToArray());
+        }
+
         public static void ConfigureEditor(string configKey, BuildOptions options = BuildOptions.None)
         {
             DateTime configureTime = DateTime.Now;

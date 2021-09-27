@@ -1,9 +1,11 @@
-﻿
+﻿using System;
+
 namespace SuperUnityBuild.BuildTool
 {
-    [System.Serializable]
+    [Serializable]
     public class Configuration
     {
+        public string id;
         public bool enabled = true;
         public string[] childKeys = null;
     }

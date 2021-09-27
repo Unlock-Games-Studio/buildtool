@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace SuperUnityBuild.BuildTool
 {
-    [System.Serializable]
+    [Serializable]
     public class ProjectConfigurations
     {
         // Data
@@ -27,6 +28,7 @@ namespace SuperUnityBuild.BuildTool
             {
                 string key = releaseTypes[i].typeName;
                 Configuration relConfig = new Configuration();
+                relConfig.id = releaseTypes[i].id;
 
                 // Check for duplicate.
                 if (refreshedConfigSet.ContainsKey(key))
@@ -65,6 +67,19 @@ namespace SuperUnityBuild.BuildTool
             }
 
             return keychains.ToArray();
+        }
+
+        public List<string> FilterKeychains(List<string> guids)
+        {
+            List<string> result = new List<string>();
+            foreach (KeyValuePair<string,Configuration> pair in configSet)
+            {
+                if (guids.Contains(pair.Value.id))
+                {
+                    result.Add(pair.Key);
+                }
+            }
+            return result;
         }
 
         public int GetEnabledBuildsCount()
@@ -236,6 +251,7 @@ namespace SuperUnityBuild.BuildTool
 
                 string key = keyChain + "/" + platforms[i].platformName;
                 Configuration relConfig = new Configuration();
+                relConfig.id = platforms[i].id;
 
                 // Check for duplicate key.
                 if (refreshedConfigSet.ContainsKey(key))
@@ -296,6 +312,7 @@ namespace SuperUnityBuild.BuildTool
                     key += " (" + variantKey + ")";
 
                 Configuration relConfig = new Configuration();
+                relConfig.id = architectures[i].id;
 
                 // Check for a duplicate key.
                 if (refreshedConfigSet.ContainsKey(key))
@@ -332,6 +349,7 @@ namespace SuperUnityBuild.BuildTool
 
                 string key = keyChain + "/" + distributions[i].distributionName;
                 Configuration relConfig = new Configuration();
+                relConfig.id = distributions[i].id;
 
                 if (refreshedConfigSet.ContainsKey(key))
                     continue;

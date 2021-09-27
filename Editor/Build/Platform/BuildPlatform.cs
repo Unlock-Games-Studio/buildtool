@@ -9,6 +9,7 @@ namespace SuperUnityBuild.BuildTool
     [Serializable]
     public class BuildPlatform
     {
+        public string id = Guid.NewGuid().ToString();
         public bool enabled = false;
         public BuildDistributionList distributionList = new BuildDistributionList();
         public BuildArchitecture[] architectures = new BuildArchitecture[0];

@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using System;
 
 namespace SuperUnityBuild.BuildTool
 {
@@ -47,6 +48,7 @@ namespace SuperUnityBuild.BuildTool
                     addedEntry.FindPropertyRelative("productName").stringValue = Application.productName;
                     addedEntry.FindPropertyRelative("bundleIdentifier").stringValue = Application.identifier;
                     addedEntry.FindPropertyRelative("companyName").stringValue = Application.companyName;
+                    addedEntry.FindPropertyRelative("id").stringValue = Guid.NewGuid().ToString();
 
                     list.serializedObject.ApplyModifiedProperties();
 

@@ -1,11 +1,13 @@
 using UnityEditor;
 using UnityEngine.Serialization;
+using System;
 
 namespace SuperUnityBuild.BuildTool
 {
-    [System.Serializable]
+    [Serializable]
     public class BuildReleaseType
     {
+        public string id;
         public string typeName = string.Empty;
         [FormerlySerializedAs("bundleIndentifier")]
         public string bundleIdentifier = string.Empty;

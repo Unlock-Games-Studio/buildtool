@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System;
 
 namespace SuperUnityBuild.BuildTool
 {
@@ -104,6 +105,7 @@ namespace SuperUnityBuild.BuildTool
                     SerializedProperty addedProperty = distList.GetArrayElementAtIndex(addedIndex);
                     addedProperty.FindPropertyRelative("enabled").boolValue = true;
                     addedProperty.FindPropertyRelative("distributionName").stringValue = "DistributionName";
+                    addedProperty.FindPropertyRelative("id").stringValue = Guid.NewGuid().ToString();
 
                     addedProperty.serializedObject.ApplyModifiedProperties();
                     distList.serializedObject.ApplyModifiedProperties();

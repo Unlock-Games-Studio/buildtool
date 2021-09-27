@@ -1,10 +1,12 @@
 ﻿using UnityEditor;
+using System;
 
 namespace SuperUnityBuild.BuildTool
 {
-    [System.Serializable]
+    [Serializable]
     public class BuildArchitecture
     {
+        public string id;
         public BuildTarget target;
         public string name;
         public bool enabled;
@@ -16,6 +18,7 @@ namespace SuperUnityBuild.BuildTool
             this.name = name;
             this.enabled = enabled;
             this.binaryNameFormat = binaryNameFormat;
+            this.id = Guid.NewGuid().ToString();
         }
     }
 }
