@@ -11,6 +11,7 @@ namespace SuperUnityBuild.BuildTool
     {
         public bool enabled = false;
         public BuildDistributionList distributionList = new BuildDistributionList();
+        [SerializeReference]
         public BuildArchitecture[] architectures = new BuildArchitecture[0];
         public BuildVariant[] variants = new BuildVariant[0];
 

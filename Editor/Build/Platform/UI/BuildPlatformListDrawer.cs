@@ -108,8 +108,6 @@ namespace SuperUnityBuild.BuildTool
                     return new BuildPC();
                 case Platform.WebGL:
                     return new BuildWebGL();
-                case Platform.AndroidBundle:
-                    return new BuildAndroidBundle();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(platform), platform, null);
             }
