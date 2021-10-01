@@ -492,6 +492,8 @@ namespace SuperUnityBuild.BuildTool
 
         private static void PerformPostBuild()
         {
+            EditorUtility.SetDirty(BuildSettings.instance);
+            AssetDatabase.SaveAssets();
             PerformBuildActions(BuildSettings.postBuildActions.buildActions, "Post-");
         }
 
