@@ -480,6 +480,7 @@ namespace SuperUnityBuild.BuildTool
             BuildDistribution distribution,
             DateTime buildTime, ref BuildOptions options, string configKey, string buildPath)
         {
+            architecture.OnPreBuild();
             PerformBuildActions(
                 releaseType,
                 platform,

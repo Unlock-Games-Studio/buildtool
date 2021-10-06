@@ -4,6 +4,8 @@ using UnityEditor;
 
 namespace SuperUnityBuild.BuildTool
 {
+    using System.Collections.Generic;
+
     [Serializable]
     public class BuildAndroid : BuildPlatform
     {
@@ -11,6 +13,7 @@ namespace SuperUnityBuild.BuildTool
 
         private const string _name = "Android";
         private const string _binaryNameFormat = "{0}.apk";
+        private const string _binaryNameBundleFormat = "{0}.aab";
         private const string _dataDirNameFormat = "{0}_Data";
         private const BuildTargetGroup _targetGroup = BuildTargetGroup.Android;
 
@@ -41,7 +44,8 @@ namespace SuperUnityBuild.BuildTool
             if (architectures == null || architectures.Length == 0)
             {
                 architectures = new BuildArchitecture[] {
-                    new BuildArchitecture(BuildTarget.Android, "Android", true, _binaryNameFormat)
+                    new AndroidBuildArchitecture(BuildTarget.Android, "Android APK", true, _binaryNameFormat, false),
+                    new AndroidBuildArchitecture(BuildTarget.Android, "Android Bundle", false, _binaryNameBundleFormat, true)
                 };
             }
 
@@ -71,8 +75,6 @@ namespace SuperUnityBuild.BuildTool
 
         public override void ApplyVariant()
         {
-            EditorUserBuildSettings.buildAppBundle = false;
-
             foreach (var variantOption in variants)
             {
                 string key = variantOption.variantKey;
