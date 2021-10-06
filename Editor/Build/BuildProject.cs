@@ -35,6 +35,11 @@ namespace SuperUnityBuild.BuildTool
             PerformBuild(buildConfigs, options);
         }
 
+        public static void BuildMultiple(List<string> keyChains)
+        {
+            PerformBuild(keyChains.ToArray());
+        }
+
         public static void ConfigureEditor(string configKey, BuildOptions options = BuildOptions.None)
         {
             DateTime configureTime = DateTime.Now;
@@ -486,6 +491,8 @@ namespace SuperUnityBuild.BuildTool
 
         private static void PerformPostBuild()
         {
+            EditorUtility.SetDirty(BuildSettings.instance);
+            AssetDatabase.SaveAssets();
             PerformBuildActions(BuildSettings.postBuildActions.buildActions, "Post-");
         }
 
